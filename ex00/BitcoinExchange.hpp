@@ -1,18 +1,29 @@
 #ifndef BitcoinExchange_hpp
 #define BitcoinExchange_hpp
 
-// #include <vector>
+#include <iostream>
+#include <fstream>
 #include <string>
+#include <map>
 
 class BitcoinExchange
 {
-
+   
     public:
+        std::map<std::string,std::string> db;
         BitcoinExchange();
         BitcoinExchange(const BitcoinExchange& bitcoinEx);
         BitcoinExchange& operator=(const BitcoinExchange& bitcoinEx);
         ~BitcoinExchange();
-        BitcoinExchange(std::string input, std::string db);
-};
+        class BtcException : public std::exception
+        {
+            private:
+                const char* error;
+            public:
+                BtcException(const char* error);
+                virtual const char* what() const throw();
+        };
+        static const char* dbFileName;
+    };
 
 #endif
