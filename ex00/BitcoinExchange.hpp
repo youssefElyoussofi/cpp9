@@ -8,9 +8,9 @@
 
 class BitcoinExchange
 {
-   
-    public:
+    private:
         std::map<std::string,std::string> db;
+    public:
         BitcoinExchange();
         BitcoinExchange(const BitcoinExchange& bitcoinEx);
         BitcoinExchange& operator=(const BitcoinExchange& bitcoinEx);
@@ -24,6 +24,7 @@ class BitcoinExchange
                 virtual const char* what() const throw();
         };
         static const char* dbFileName;
+        void exchange(const char* inputFile);
     };
 
 #endif

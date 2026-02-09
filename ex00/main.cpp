@@ -11,15 +11,8 @@ int main(int ac, char **av)
     try
     {
         BitcoinExchange btc;
-        
-        std::map<std::string,std::string>::iterator it = btc.db.begin();
 
-        for (; it != btc.db.end(); it++)
-        {
-            std::cout << it->first << ' ' << it->second << '\n';
-        }
-        
-        
+        btc.exchange(av[1]);
     }
     catch(const std::exception& e)
     {

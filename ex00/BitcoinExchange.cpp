@@ -10,11 +10,9 @@ BitcoinExchange::BitcoinExchange()
         throw BitcoinExchange::BtcException("failed load database");
 
     std::string line;
-    for (size_t i = 0; i < 10; i++)
+    getline(dbfile,line);
+    while (getline(dbfile,line))
     {
-        std::getline(dbfile,line);
-        if (i == 0)
-            continue;
         size_t pos =  line.find(',');
         std::string first = line.substr(0,pos);
         std::string second = line.substr(pos + 1,line.length());
@@ -50,3 +48,14 @@ const char* BitcoinExchange::BtcException::what() const throw()
     return this->error;
 }
 
+
+void BitcoinExchange::exchange(const char* inputFile)
+{
+    std::ifstream inputData(inputFile);
+
+    if (!inputData.is_open())
+        throw BitcoinExchange::BtcException("failed to open input file");
+
+    
+    inputData.close();
+}
