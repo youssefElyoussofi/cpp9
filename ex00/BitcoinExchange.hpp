@@ -23,7 +23,6 @@ class BitcoinExchange
                 BtcException(const char* error);
                 virtual const char* what() const throw();
         };
-        static const char* dbFileName;
         void exchange(const char* inputFile);
     };
 

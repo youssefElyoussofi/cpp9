@@ -1,4 +1,7 @@
 #include "BitcoinExchange.hpp"
+#include <vector>
+
+
 
 int main(int ac, char **av)
 {
@@ -11,12 +14,14 @@ int main(int ac, char **av)
     try
     {
         BitcoinExchange btc;
-
+    
         btc.exchange(av[1]);
     }
     catch(const std::exception& e)
     {
         std::cerr << "Error: " << e.what() << '\n';
     }
+    
+
     return 0;
 }
