@@ -1,8 +1,11 @@
 #include "BitcoinExchange.hpp"
 #include <cstring>
+#include <cstdlib>
 #include <vector>
+#include <limits.h>
+#include <utility>
 
-enum Date {YEAR,MONTH,DAY};
+enum Number {YEAR,MONTH,DAY,VALUE};
 
 BitcoinExchange::BitcoinExchange()
 {
@@ -18,7 +21,8 @@ BitcoinExchange::BitcoinExchange()
         size_t pos =  line.find(',');
         std::string first = line.substr(0,pos);
         std::string second = line.substr(pos + 1,line.length());
-        this->db.insert({first,second});
+        double price = strtod(second.c_str(),NULL);
+        this->db.insert(std::pair<std::string,double>(first,price));
     }
     dbfile.close();
 }
@@ -40,29 +44,35 @@ BitcoinExchange::~BitcoinExchange()
 }
 
 
-BitcoinExchange::BtcException::BtcException(const char* error):error(error)
+BitcoinExchange::BtcException::BtcException(std::string error):error(error)
 {
 
 }
+
+BitcoinExchange::BtcException::~BtcException() throw(){}
 
 const char* BitcoinExchange::BtcException::what() const throw()
 {
-    return this->error;
+    return this->error.c_str();
 }
 
 
-static void check_number(const std::string& strNum,const Date& date)
+
+static double check_number(const std::string& strNum,const Number& num, const std::string& src)
 {
     char* tmp = NULL;
-    long nb = strtol(strNum.c_str(),&tmp,10);
-    if (tmp != NULL)
-        throw BitcoinExchange::BtcException("date number not valid");
-    if (date == YEAR && (nb > 2026 || nb < 2008))
-        throw BitcoinExchange::BtcException("date number not valid");
-    if (date == MONTH && (nb > 12 || nb < 1))
-        throw BitcoinExchange::BtcException("date number not valid"); 
-    if (date == DAY && (nb > 31 || nb < 1))
-        throw BitcoinExchange::BtcException("date number not valid");
+    double nb = strtod(strNum.c_str(),&tmp);
+    if (*tmp != '\0')
+        throw BitcoinExchange::BtcException("bad input => " + src);
+    if (num == MONTH && (nb > 12 || nb < 1))
+        throw BitcoinExchange::BtcException("bad input => " + src); 
+    if (num == DAY && (nb > 31 || nb < 1))
+        throw BitcoinExchange::BtcException("number not valid");
+    if (num == VALUE && nb < 0)
+        throw BitcoinExchange::BtcException("not a positive number");
+    if (num == VALUE && nb > INT_MAX)
+        throw BitcoinExchange::BtcException("too large a number");
+    return nb;
 }
 
 
@@ -72,21 +82,18 @@ static void check_date_format(const std::string& data)
     {
         throw BitcoinExchange::BtcException("date format not valid");
     }
-    check_number(data.substr(0,4),YEAR);
-    check_number(data.substr(5,2),MONTH);
-    check_number(data.substr(8,2),DAY);
+    check_number(data.substr(0,4),YEAR,data);
+    check_number(data.substr(5,2),MONTH,data);
+    check_number(data.substr(8,2),DAY,data);
 }   
 
 
-static void check_line(const std::string& line)
+static std::pair<std::string,double> check_line(const std::string& line)
 {
     std::vector<std::string> tokens;
     tokens.reserve(3);
-    char *tmp = new char[line.length()];
-    for (size_t i = 0; i < line.length(); i++)
-    {
-        tmp[i] = line[i];
-    }
+    char *tmp = new char[line.length() + 1];
+    std::strcpy(tmp,line.c_str());
 
     char *str = strtok(tmp," ");
     while (str)
@@ -94,11 +101,12 @@ static void check_line(const std::string& line)
         tokens.push_back(str);
         str = strtok(NULL," ");
     }
-    for (size_t i = 0; i < tokens.size(); i++)
-    {
-        std::cout << tokens.at(i) << "\n";
-    }
     delete[] tmp;
+    if (tokens.size() != 3 || tokens.at(1) != "|")
+        throw BitcoinExchange::BtcException("invalid line input must be \"date | value\"");
+    check_date_format(tokens.at(0));
+    double total = check_number(tokens.at(2),VALUE,tokens.at(2));
+    return std::pair<std::string,double>(tokens.at(0),total);
 }
 
 void BitcoinExchange::exchange(const char* inputFile)
@@ -107,16 +115,31 @@ void BitcoinExchange::exchange(const char* inputFile)
 
     if (!inputData.is_open())
         throw BitcoinExchange::BtcException("failed to open input file");
-    // std::string line;
+    std::string line;
 
-    // std::getline(inputData,line);
-    // while (std::getline(inputData,line))
-    // {
-    //     std::cout << line << '\n';
-    // }
-
-    check_line("           2011-01-03           |         3          fghdfgh");
-    check_date_format("2011-01-03");
-
+    std::getline(inputData,line);
+    while (std::getline(inputData,line))
+    {
+        try
+        {
+            std::pair<std::string, double> p;
+            p = check_line(line);
+            std::map<std::string,double>::iterator it;
+            it = this->db.upper_bound(p.first);
+            if (it->first == p.first)
+                std::cout << it->first << " => " << p.second << " = " << it->second * p.second << '\n';
+            else if (it != this->db.begin())
+            {
+                it--;
+                std::cout << it->first << " => " << p.second << " = " << it->second * p.second << '\n';
+            }
+            else
+                std::cerr << "Error: no date found\n";
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << "Error: " << e.what() << '\n';
+        }
+    }
     inputData.close();
 }

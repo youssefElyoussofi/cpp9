@@ -9,7 +9,7 @@
 class BitcoinExchange
 {
     private:
-        std::map<std::string,std::string> db;
+        std::map<std::string,double> db;
     public:
         BitcoinExchange();
         BitcoinExchange(const BitcoinExchange& bitcoinEx);
@@ -18,9 +18,10 @@ class BitcoinExchange
         class BtcException : public std::exception
         {
             private:
-                const char* error;
+                std::string error;
             public:
-                BtcException(const char* error);
+                BtcException(std::string error);
+                virtual ~BtcException() throw();
                 virtual const char* what() const throw();
         };
         void exchange(const char* inputFile);

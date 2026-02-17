@@ -1,5 +1,5 @@
 CXX=c++
-CXXFLAGS=-Wall -Wextra -Werror 
+CXXFLAGS=-Wall -Wextra -Werror -g -std=c++98
 SRC=BitcoinExchange.cpp main.cpp
 OBJ=$(SRC:.cpp=.o)
 NAME=btc
