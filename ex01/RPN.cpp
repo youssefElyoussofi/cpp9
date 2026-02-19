@@ -88,6 +88,8 @@ void Rpn::processPolishEX(const std::string& str)
         else if (str[i] == '/')
             calculate(DIV);
     }
+    if (rpn.size() > 1)
+        throw Rpn::RpnException("RPN expression must end with operator");
     std::cout << rpn.top() << '\n';
 }
 
