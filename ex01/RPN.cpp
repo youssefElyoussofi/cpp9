@@ -69,12 +69,9 @@ void Rpn::calculate(operat op)
 void Rpn::processPolishEX(const std::string& str)
 {
     std::string allowed = "0123456789+-/* ";
-    
-    for (size_t i = 0; i < str.length(); i++)
-    {
-        if (allowed.find(str[i]) == std::string::npos)
-            throw Rpn::RpnException("Invalid Input");
-    }
+
+    if (str.find_first_not_of(allowed) != std::string::npos)
+        throw Rpn::RpnException("Invalid Input");
     for(size_t i = 0;i < str.length();i++)
     {
         if (isdigit(str[i]))
