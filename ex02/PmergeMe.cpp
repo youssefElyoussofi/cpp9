@@ -134,7 +134,7 @@ void PmergeMe::merge_sort(std::vector<std::pair<int,int> >& pairs)
 }
 
 
-static void jacobstalNums(std::vector<int>& jacobstal)
+static void jacobstalNums(std::vector<size_t>& jacobstal)
 {
     jacobstal.reserve(20);
     jacobstal[0] = 0;
@@ -153,10 +153,10 @@ static bool compare(const std::pair<int, int> &elem, const std::pair<int, int> &
 void PmergeMe::insertion(std::list<std::pair<int,int> >& pairs)
 {
     std::list<std::pair<int, int> > losers = pairs;
-    std::vector<int> jacob;
+    std::vector<size_t> jacob;
     jacobstalNums(jacob);
     std::list<std::pair<int, int> >::iterator oldIterat, currIterat, target, insert_pos, index;
-    size_t jacobIndex = 2, pos, total = 0;
+    size_t jacobIndex = 2, pos;
     std::pair<int, int> tmp;
     for (size_t total = 0; total < losers.size();)
     {
@@ -185,7 +185,7 @@ void PmergeMe::insertion(std::list<std::pair<int,int> >& pairs)
                 tmp.first = index->second;
                 tmp.second = index->first;
                 target = find(pairs.begin(), pairs.end(), *index);
-                insert_pos = lower_bound(pairs.begin(), target, tmp, compare);
+                insert_pos = std::lower_bound(pairs.begin(), target, tmp, compare);
                 pairs.insert(insert_pos, tmp);
                 --index;
                 ++total;
@@ -201,28 +201,35 @@ void PmergeMe::insertion(std::vector<std::pair<int,int> >& pairs)
     std::pair<int, int> tmp;
 
     losers = pairs;
-    std::vector<int> jacob;
+    std::vector<size_t> jacob;
     jacobstalNums(jacob);
-    size_t jIndex = 2, currIndex = 0, oldIndex = 0;
+    size_t jIndex = 2, currIndex = 0, oldIndex = 0 ,total = 0;
     std::vector<std::pair<int, int> >::iterator target, insert_pos;
-    while (oldIndex != losers.size() - 1)
+    while (total < losers.size())
     {
-        currIndex = (jacob[jIndex] - 1 > losers.size() )? (losers.size() - 1) : (jacob[jIndex] - 1);
         if (jacob[jIndex] == 1)
         {
             tmp.first = losers[0].second;
             tmp.second = losers[0].first;
             pairs.insert(pairs.begin(),tmp);
+            total++;
         }
         else
         {
+            if (jacob[jIndex] < losers.size())
+            {
+                currIndex = jacob[jIndex] - 1;
+            }
+            else
+                currIndex = losers.size() - 1;
             for (size_t i = currIndex; i > oldIndex; --i)
             {
                 tmp.first = losers[i].second;
                 tmp.second = losers[i].first;
                 target = find(pairs.begin(),pairs.end(),losers[i]);
-                insert_pos = lower_bound(pairs.begin(),target,tmp,compare);
+                insert_pos = std::lower_bound(pairs.begin(),target,tmp,compare);
                 pairs.insert(insert_pos,tmp);
+                total++;
             }
         }
         oldIndex = currIndex;
@@ -247,7 +254,7 @@ double PmergeMe::algorithm(Type type)
     else
         insertion(this->pairsVec);
     
-    if (isOdd)
+    if (this->isOdd)
     {
         std::pair<int, int> tmp;
         tmp.first = this->single;
@@ -255,13 +262,13 @@ double PmergeMe::algorithm(Type type)
         if (type == VECTOR)
         {
             std::vector<std::pair<int, int> >::iterator insert_pos;
-            insert_pos = lower_bound(pairsVec.begin(), pairsVec.end(), tmp, compare);
+            insert_pos = std::lower_bound(pairsVec.begin(), pairsVec.end(), tmp, compare);
             pairsVec.insert(insert_pos, tmp);
         }
         else
         {
             std::list<std::pair<int, int> >::iterator insert_pos;
-            insert_pos = lower_bound(pairsLst.begin(), pairsLst.end(), tmp, compare);
+            insert_pos = std::lower_bound(pairsLst.begin(), pairsLst.end(), tmp, compare);
             pairsLst.insert(insert_pos, tmp);       
         }
     }

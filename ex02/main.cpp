@@ -5,7 +5,7 @@ void parsing(int ac, char **argv, std::vector<int> &nums)
     if (ac <= 2)
         throw std::logic_error("enter at least two argements without using quotes");
     nums.reserve(ac - 1);
-    for (size_t i = 1; i < ac; i++)
+    for (int i = 1; i < ac; i++)
     {
         char *rest;
         long nb = strtol(argv[i], &rest, 10);
