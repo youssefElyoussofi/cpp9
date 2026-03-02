@@ -1,7 +1,7 @@
 #include "BitcoinExchange.hpp"
 #include <cstring>
 #include <cstdlib>
-#include <vector>
+#include <deque>
 #include <limits.h>
 #include <utility>
 
@@ -90,8 +90,7 @@ static void check_date_format(const std::string& data)
 
 static std::pair<std::string,double> check_line(const std::string& line)
 {
-    std::vector<std::string> tokens;
-    tokens.reserve(3);
+    std::deque<std::string> tokens;
     char *tmp = new char[line.length() + 1];
     std::strcpy(tmp,line.c_str());
 
