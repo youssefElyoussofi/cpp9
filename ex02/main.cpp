@@ -11,8 +11,10 @@ void parsing(int ac, char **argv, std::vector<int> &nums)
         long nb = strtol(argv[i], &rest, 10);
         if (rest == argv[i] || *rest != '\0')
             throw std::logic_error("input not valid");
-        if (nb > INT_MAX || nb < INT_MIN)
-            throw std::logic_error("invalid number out of rand INT_MAX INT_MIN");
+        if (nb > INT_MAX )
+            throw std::logic_error("invalid number out of rand INT_MAX");
+        if (nb < 0)
+            throw std::logic_error("invalid number must be positive");
         if (nums.size() > 0 && find(nums.begin(), nums.end(), nb) != nums.end())
             throw std::logic_error("invalid input do not enter Duplicate Number");
         nums.push_back(nb);
@@ -38,7 +40,7 @@ int main(int ac, char **av)
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << '\n';
+        std::cerr << "Error: " << e.what() << '\n';
     }
     return 0;
 }

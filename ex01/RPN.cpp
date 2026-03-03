@@ -1,8 +1,4 @@
 #include "RPN.hpp"
-#include <string>
-#include <exception>
-#include <cstring>
-#include <iostream>
 
 Rpn::Rpn()
 {
@@ -86,7 +82,7 @@ void Rpn::processPolishEX(const std::string& str)
             calculate(DIV);
     }
     if (rpn.size() > 1)
-        throw Rpn::RpnException("RPN expression must end with operator");
+        throw Rpn::RpnException("RPN calculation expression incomplete");
     std::cout << rpn.top() << '\n';
 }
 

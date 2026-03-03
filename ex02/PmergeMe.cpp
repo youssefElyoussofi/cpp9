@@ -274,7 +274,7 @@ double PmergeMe::algorithm(Type type)
     }
 
     gettimeofday(&t2, NULL);
-    double time = ((t2.tv_sec - t1.tv_sec) * 1000000.0) + (t2.tv_usec - t1.tv_usec);
+    double time = ((t2.tv_sec - t1.tv_sec) * 1000000.0) + (t2.tv_usec - t1.tv_usec); 
     return time;
 }
 

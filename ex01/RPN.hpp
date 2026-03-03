@@ -1,6 +1,8 @@
 #include <stack>
 #include <string>
 #include <exception>
+#include <cstring>
+#include <iostream>
 
 enum operat {ADD,SUM,MULTI,DIV};
 

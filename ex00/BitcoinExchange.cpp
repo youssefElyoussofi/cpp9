@@ -27,14 +27,17 @@ BitcoinExchange::BitcoinExchange()
     dbfile.close();
 }
 
-BitcoinExchange::BitcoinExchange(const BitcoinExchange& bitcoinEx)
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& bitcoinEx):db(bitcoinEx.db)
 {
-    (void)bitcoinEx;
+    
 }
 
 BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& bitcoinEx)
 {
-    (void)bitcoinEx;
+    if (this != &bitcoinEx)
+    {
+        this->db = bitcoinEx.db;
+    }
     return *this;
 }
 
@@ -124,12 +127,12 @@ void BitcoinExchange::exchange(const char* inputFile)
             std::pair<std::string, double> p;
             p = check_line(line);
             std::map<std::string,double>::iterator it;
-            it = this->db.upper_bound(p.first);
+            it = this->db.lower_bound(p.first);
             if (it->first == p.first)
                 std::cout << it->first << " => " << p.second << " = " << it->second * p.second << '\n';
             else if (it != this->db.begin())
             {
-                it--;
+                --it;
                 std::cout << it->first << " => " << p.second << " = " << it->second * p.second << '\n';
             }
             else
