@@ -9,6 +9,7 @@
 #include <deque>
 #include <utility>
 #include <map>
+#include <iomanip>
 
 class BitcoinExchange
 {

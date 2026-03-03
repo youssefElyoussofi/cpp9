@@ -125,11 +125,11 @@ void BitcoinExchange::exchange(const char* inputFile)
             std::map<std::string,double>::iterator it;
             it = this->db.lower_bound(p.first);
             if (it->first == p.first)
-                std::cout << it->first << " => " << p.second << " = " << it->second * p.second << '\n';
+                std::cout << it->first << " => " << p.second << " = " << std::fixed << std::setprecision(2) << (it->second * p.second) << '\n';
             else if (it != this->db.begin())
             {
                 --it;
-                std::cout << it->first << " => " << p.second << " = " << it->second * p.second << '\n';
+                std::cout << it->first << " => " << p.second << " = " << std::fixed << std::setprecision(2) << (it->second * p.second) << '\n';
             }
             else
                 std::cerr << "Error: no date found\n";
