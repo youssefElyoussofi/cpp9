@@ -1,9 +1,5 @@
 #include "BitcoinExchange.hpp"
-#include <cstring>
-#include <cstdlib>
-#include <deque>
-#include <limits.h>
-#include <utility>
+
 
 enum Number {YEAR,MONTH,DAY,VALUE};
 
@@ -73,7 +69,7 @@ static double check_number(const std::string& strNum,const Number& num, const st
         throw BitcoinExchange::BtcException("number not valid");
     if (num == VALUE && nb < 0)
         throw BitcoinExchange::BtcException("not a positive number");
-    if (num == VALUE && nb > INT_MAX)
+    if (num == VALUE && static_cast<int>(nb) > 1000)
         throw BitcoinExchange::BtcException("too large a number");
     return nb;
 }

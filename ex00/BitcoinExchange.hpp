@@ -4,6 +4,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
+#include <cstdlib>
+#include <deque>
+#include <utility>
 #include <map>
 
 class BitcoinExchange
